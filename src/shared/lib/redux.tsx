@@ -23,7 +23,7 @@ export const useAppDispatch = (): typeof store.dispatch => {
 
 export const createBaseSelector = <S, N extends string>(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  slice: Slice<S, any, N>
+  slice: Slice<S, any, N>,
 ) => {
   return (store: unknown) => {
     const anyStore = store as Record<string, unknown>;
@@ -32,7 +32,7 @@ export const createBaseSelector = <S, N extends string>(
 };
 
 export const useAction = <T, A extends Parameters<typeof store.dispatch>[0]>(
-  factory: (p: T) => A
+  factory: (p: T) => A,
 ) => {
   const dispatch = useAppDispatch();
 
@@ -40,23 +40,23 @@ export const useAction = <T, A extends Parameters<typeof store.dispatch>[0]>(
     (params: T) => {
       return dispatch(factory(params));
     },
-    [dispatch, factory]
+    [dispatch, factory],
   );
 };
 
 export const useActionWithDeps = <
   T extends { deps: unknown },
-  A extends Parameters<typeof store.dispatch>[0]
+  A extends Parameters<typeof store.dispatch>[0],
 >(
   factory: (p: T) => A,
-  deps: T["deps"]
+  deps: T["deps"],
 ) => {
   const dispatch = useAppDispatch();
   return useCallback(
     (params: Omit<T, "deps">) => {
       return dispatch(factory({ deps, ...params } as T));
     },
-    [dispatch, factory, deps]
+    [dispatch, factory, deps],
   );
 };
 
@@ -71,10 +71,13 @@ export const registerSlice = (slices: Slice[]) => {
 
   // Создаем новый корневой редуктор
   const rootReducer = combineReducers(
-    Array.from(slicesSet).reduce((acc, slice) => {
-      acc[slice.name] = slice.reducer;
-      return acc;
-    }, {} as Record<string, any>)
+    Array.from(slicesSet).reduce(
+      (acc, slice) => {
+        acc[slice.name] = slice.reducer;
+        return acc;
+      },
+      {} as Record<string, any>,
+    ),
   );
 
   // Заменяем редуктор в хранилище
