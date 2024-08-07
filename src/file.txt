@@ -1,0 +1,7 @@
+app
+entities
+features
+file.txt
+pages
+shared
+widgets

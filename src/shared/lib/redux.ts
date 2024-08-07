@@ -61,30 +61,23 @@ export const useActionWithDeps = <
 };
 
 const slicesSet = new Set<Slice>();
+
 export const registerSlice = (slices: Slice[]) => {
   console.log(slices, slicesSet);
-
-  // Добавляем новые срезы в множество
   slices.forEach((slice) => {
     slicesSet.add(slice);
   });
 
-  // Создаем новый корневой редуктор
-  const rootReducer = combineReducers(
-    Array.from(slicesSet).reduce(
-      (acc, slice) => {
-        acc[slice.name] = slice.reducer;
-        return acc;
-      },
-      {} as Record<string, any>,
-    ),
+  store.replaceReducer(
+    combineReducers({
+      ...Array.from(slicesSet).reduce(
+        (acc, slice) => {
+          acc[slice.name] = slice.reducer;
+          return acc;
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        {} as Record<string, any>,
+      ),
+    }),
   );
-
-  // Заменяем редуктор в хранилище
-  store.replaceReducer(rootReducer);
 };
-
-// Пример создания хранилища
-const store = configureStore({
-  reducer: combineReducers({}),
-});
